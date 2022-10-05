@@ -1,0 +1,1230 @@
+views:
+  - theme: Backend-selected
+    title: Home
+    icon: mdi:monitor-dashboard
+    badges: []
+    cards:
+      - type: custom:mushroom-chips-card
+        chips:
+          - type: alarm-control-panel
+            entity: alarm_control_panel.indoor
+            content_info: name
+            name: Indoor
+          - type: alarm-control-panel
+            entity: alarm_control_panel.outdoor
+            content_info: name
+            name: Outdoor
+          - type: weather
+            entity: weather.home
+            show_conditions: true
+            show_temperature: true
+        alignment: center
+      - type: custom:mushroom-title-card
+        title: |-
+          {% set time = now().hour %}
+          {% if (time >= 18) %}
+            Good Evening, {{user}}!
+          {% elif (time >= 12) %}
+            Good Afternoon, {{user}}!
+          {% elif (time >= 5) %}
+            Good Morning, {{user}}!
+          {% else %}
+            Hello, {{user}}!
+          {% endif %}
+        alignment: center
+        subtitle: ''
+      - type: custom:mushroom-template-card
+        primary: Home
+        card_mod:
+          style: |
+            ha-card {
+              box-shadow: none;
+              background: none}
+      - type: custom:mushroom-template-card
+        primary: Home Occupancy
+        card_mod:
+          style: |
+            ha-card {
+              border-radius: 15px;
+              background: black}
+        secondary: '{{states(''group.home_occupancy'') | capitalize}}'
+        icon: >-
+          {{ 'mdi:home' if is_state('group.home_occupancy','off') else
+          'mdi:home-account' }}
+        multiline_secondary: true
+        entity: switch.guest
+        icon_color: '{{ '' '' if is_state(''group.home_occupancy'',''off'') else ''blue'' }}'
+        badge_icon: '{{ '' '' if is_state(''switch.guest'',''off'') else ''mdi:account-plus'' }}'
+        badge_color: red
+      - type: horizontal-stack
+        cards:
+          - type: custom:stack-in-card
+            mode: vertical
+            card_mod:
+              style: |
+                ha-card {
+                  background: black;
+                  border-radius: 15px;
+                  }
+            cards:
+              - type: custom:mushroom-template-card
+                primary: Nadir
+                secondary: ''
+                icon: mdi:human-male
+                icon_color: blue
+                entity: person.nadir
+                tap_action: none
+              - type: custom:mushroom-chips-card
+                alignment: center
+                card_mod:
+                  style: |
+                    ha-card {
+                      top: -10px;
+                      --chip-background: none;
+                      }
+                chips:
+                  - type: entity
+                    entity: person.nadir
+                    icon: mdi:map-marker
+                  - type: entity
+                    entity: sensor.nadir_s22_battery_level
+                    alignment: center
+          - type: custom:stack-in-card
+            mode: vertical
+            card_mod:
+              style: |
+                ha-card {
+                  background: black;
+                  border-radius: 15px;
+                  }
+            cards:
+              - type: custom:mushroom-template-card
+                primary: Laurika
+                secondary: ''
+                icon: mdi:human-female
+                icon_color: pink
+                entity: person.laurika
+                tap_action: none
+              - type: custom:mushroom-chips-card
+                alignment: center
+                card_mod:
+                  style: |
+                    ha-card {
+                      top: -10px;
+                      --chip-background: none;
+                      }
+                chips:
+                  - type: entity
+                    entity: person.laurika
+                    icon: mdi:map-marker
+                  - type: entity
+                    entity: sensor.laurika_battery_level
+                    alignment: center
+      - type: custom:mushroom-template-card
+        primary: Navigation Tabs
+        card_mod:
+          style: |
+            ha-card {
+              box-shadow: none;
+              background: none}
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Home
+            secondary: ''
+            icon: mdi:home
+            badge_color: '{{ ''blue'' if is_state(''switch.guest'', ''off'') else ''green''}}'
+            icon_color: blue
+            badge_icon: >-
+              {{ '' if is_state('group.home_occupancy', 'off') else
+              'mdi:account-group-outline'}}
+            layout: vertical
+            fill_container: false
+            tap_action:
+              action: navigate
+              navigation_path: house
+            hold_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.guest
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-template-card
+            primary: Lights
+            secondary: ''
+            icon: mdi:lightbulb
+            icon_color: amber
+            style: |
+              ha-card {
+                background: }
+            layout: vertical
+            tap_action:
+              action: navigate
+              navigation_path: lights
+            badge_color: >-
+              {{ 'red' if is_state('binary_sensor.loadshedding_active', 'off')
+              else ' '}}
+            badge_icon: >-
+              {{ 'mdi:lightbulb-alert' if
+              is_state('binary_sensor.loadshedding_active', 'off') else ' '}}
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-template-card
+            primary: Alarm
+            secondary: ''
+            icon: mdi:shield
+            icon_color: green
+            style: |
+              ha-card {
+                background: }
+            layout: vertical
+            tap_action:
+              action: navigate
+              navigation_path: alarm
+            badge_color: ''
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-template-card
+            primary: Network
+            secondary: ''
+            icon: mdi:network
+            icon_color: red
+            style: |
+              ha-card {
+                background: }
+            layout: vertical
+            tap_action:
+              action: navigate
+              navigation_path: network
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+      - type: custom:mushroom-template-card
+        primary: Rooms
+        card_mod:
+          style: |
+            ha-card {
+              box-shadow: none;
+              background: none}
+  - theme: Backend-selected
+    title: house
+    path: house
+    icon: mdi:home
+    badges: []
+    cards:
+      - type: custom:mushroom-chips-card
+        chips:
+          - type: back
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Geyser
+            secondary: >
+              Usage: {{'\t'}} {{ states('sensor.geyser_daily') }} kWh {{- '\n'
+              -}} Current:  {{ states('sensor.geyser_current') }} A {{- '\n' -}}
+              Power: {{'\t'}} {{ states('sensor.geyser_power') }} W
+            icon: mdi:water-boiler
+            icon_color: |
+              {% if is_state('switch.geyser_switch','on') %}
+              amber
+              {%endif%}
+            tap_action:
+              action: toggle
+            entity: switch.geyser_switch
+            multiline_secondary: true
+          - type: custom:mushroom-template-card
+            primary: Geyser Usage
+            secondary: >
+              Weekly: {{'\t'}}{{'\t'}}{{ states('sensor.geyser_weekly') }} kWh
+              {{- '\n' -}} Monthly:{{'\t'}}{{ states('sensor.geyser_monthly') }}
+              kWh {{- '\n' -}} Total:{{'\t'}}{{'\t'}}{{
+              states('sensor.geyser_usage') }} kWh
+            multiline_secondary: true
+            icon_color: ''
+            icon: ''
+  - theme: Backend-selected
+    title: lights
+    path: lights
+    icon: mdi:lightbulb
+    badges: []
+    cards:
+      - type: custom:mushroom-chips-card
+        chips:
+          - type: back
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Upcoming Loadshedding
+            icon: mdi:power-plug-off-outline
+            multiline_secondary: true
+            secondary: >-
+              {%- for event in states['sensor.eskomsepush'].attributes.events
+              -%} {{ as_timestamp(event['start']) | timestamp_custom('%a %d %b
+              %Y %H:%M') }}-{{ as_timestamp(event['end']) |
+              timestamp_custom('%H:%M') }} {{- '\n' -}} {%- endfor -%}
+            fill_container: false
+            icon_color: red
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: horizontal-stack
+            cards:
+              - type: custom:mushroom-template-card
+                primary: Load Shedding Status
+                secondary: >-
+                  Current
+                  Status:{{'\t'}}{{states('sensor.next_loadshedding_event')}} 
+
+                  Upcoming: {{'\t'}}{{'\t'}}In
+                  {{as_timestamp(states('sensor.next_loadshedding_time')) |
+                  timestamp_custom('%H')}} hrs
+                icon: ''
+                multiline_secondary: true
+                icon_color: ''
+                card_mod:
+                  style: |
+                    ha-card {
+                      border-radius: 15px;
+                      background: black}
+              - type: custom:mushroom-template-card
+                primary: EskomSePush
+                secondary: >-
+                  API Calls Remaining:
+                  {{'\t'}}{{states('sensor.eskomsepush_calls_remaining')}} 
+
+                  EskomSePush Status: {{states('sensor.eskomsepush')}}
+                icon: ''
+                multiline_secondary: true
+                icon_color: ''
+                card_mod:
+                  style: |
+                    ha-card {
+                      border-radius: 15px;
+                      background: black}
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Master Bedroom Lights
+            secondary: ''
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+            icon: mdi:lightbulb-group
+            entity: switch.master_bedroom_lights
+            icon_color: '{{ ''yellow'' if is_state(''switch.master_bedroom_lights'',''on'') }}'
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: switch.master_bedroom_light
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Main
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: switch.desk_light
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Desk
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: switch.closet_light
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Closet
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: switch.master_bedroom_ensuite
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Ensuite
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: switch.shower_light
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Bath
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+            alignment: center
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Common Areas
+            secondary: ''
+            icon: mdi:lightbulb-group
+            entity: switch.common_areas
+            icon_color: '{{ ''yellow'' if is_state(''switch.common_areas'',''on'') }}'
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: switch.kitchen_light
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Kitchen
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: switch.dining_room_light
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Dining Room
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: switch.lounge_light
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Lounge
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: light.staircase_light
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Staircase
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+            alignment: center
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Outside Lights
+            secondary: ''
+            icon: mdi:lightbulb-group
+            entity: switch.outside_lights
+            icon_color: '{{ ''yellow'' if is_state(''switch.outside_lights'',''on'') }}'
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: switch.master_bedroom_outside
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Backyard
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: switch.front_yard_light
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Front Yard
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: switch.veranda_light
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Veranda
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: switch.garage_light
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                name: Garage
+                content_info: name
+                tap_action:
+                  action: toggle
+                hold_action:
+                  action: more-info
+            alignment: center
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Load Shedding Backup Lights
+            secondary: ''
+            icon: mdi:lightbulb-group
+            entity: switch.load_shedding_backup_lights
+            icon_color: >-
+              {{ 'yellow' if is_state('switch.load_shedding_backup_lights','on')
+              }}
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: switch.master_bedroom_led
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Bedroom
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: switch.dining_room_led
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Dining Room
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: switch.kitchen_led
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                content_info: name
+                name: Kitchen
+                hold_action:
+                  action: more-info
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: switch.lounge_led
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: black}
+                icon_color: yellow
+                name: Lounge
+                content_info: name
+                tap_action:
+                  action: toggle
+                hold_action:
+                  action: more-info
+            alignment: center
+  - theme: Backend-selected
+    title: alarm
+    path: alarm
+    icon: mdi:shield-home
+    badges: []
+    cards:
+      - type: custom:mushroom-chips-card
+        chips:
+          - type: back
+          - type: entity
+            entity: group.door_zones
+            content_info: name
+            name: Doors
+            icon: mdi:door-open
+            icon_color: red
+          - type: entity
+            entity: group.interior_passives
+            content_info: name
+            icon_color: red
+            name: Indoor
+            icon: mdi:home-alert
+          - type: entity
+            entity: group.exterior_zones
+            content_info: name
+            icon_color: red
+            name: Outdoor
+            icon: mdi:home-alert-outline
+          - type: entity
+            entity: group.staircase_motion
+            content_info: name
+            name: Stairs
+            icon_color: red
+            icon: mdi:stairs-box
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-alarm-control-panel-card
+            entity: alarm_control_panel.indoor
+            states:
+              - armed_home
+              - armed_away
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-alarm-control-panel-card
+            entity: alarm_control_panel.outdoor
+            states:
+              - armed_home
+              - armed_away
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+      - type: custom:stack-in-card
+        mode: horizontal
+        card_mod:
+          style: |
+            ha-card {
+              border-radius: 15px;
+              background: black;}
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Alarm Battery
+            secondary: >-
+              Voltage:
+              {{'\t'}}{{'\t'}}{{states('sensor.paradox_battery_voltage')}} V
+
+              Voltage(ESP):{{'\t'}}{{states('sensor.paradox_battery_voltage_esp')}}
+              V
+            icon: mdi:battery
+            icon_color: blue
+            multiline_secondary: true
+            card_mod:
+              style: |
+                ha-card {
+                  width: 150%}
+          - type: custom:mushroom-chips-card
+            chips:
+              - type: entity
+                entity: switch.pgm_01
+                name: Silent Panic
+                content_info: name
+                icon: mdi:car-brake-alert
+                use_entity_picture: false
+                card_mod:
+                  style: |
+                    ha-card {
+                      top: 25px;
+                      right: -75px;
+                      --chip-background: red;
+                      --chip-width: 5;
+      - type: custom:stack-in-card
+        mode: horizontal
+        card_mod:
+          style: |
+            ha-card {
+              border-radius: 15px;
+              background: none;
+              box-shadow: none;}
+        cards:
+          - type: custom:mushroom-title-card
+            title: ''
+            subtitle: Alarm Zones
+            card_mod:
+              style: |
+                title-card {
+                  subtitle: white;}
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Main Entrance
+            secondary: >
+              {% if is_state('binary_sensor.front_door','off')
+              %}Closed{%else%}Open{%endif%}
+
+              {% if is_state('switch.main_entrance','on') %}Bypassed{%endif%}
+            icon: hass:door
+            entity: switch.main_entrance
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.main_entrance
+            layout: vertical
+            icon_color: >-
+              {{'red' if is_state('binary_sensor.front_door', 'on') else
+              'green'}}
+            badge_icon: |-
+              {% if is_state('switch.main_entrance','on') %}
+              mdi:alert-circle
+              {%endif%}
+            badge_color: red
+            multiline_secondary: true
+            fill_container: true
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-template-card
+            primary: Lounge Door
+            secondary: >
+              {% if is_state('binary_sensor.lounge_door','off')
+              %}Closed{%else%}Open{%endif%}
+
+              {% if is_state('switch.lounge_door','on') %}Bypassed{%endif%}
+            icon: hass:door
+            entity: switch.lounge_door
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.lounge_door
+            layout: vertical
+            icon_color: >-
+              {{'red' if is_state('binary_sensor.lounge_door', 'on') else
+              'green'}}
+            badge_icon: |-
+              {% if is_state('switch.lounge_door','on') %}
+              mdi:alert-circle
+              {%endif%}
+            badge_color: red
+            multiline_secondary: true
+            fill_container: true
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-template-card
+            primary: Bedroom Door
+            secondary: >
+              {% if is_state('binary_sensor.room_door','off')
+              %}Closed{%else%}Open{%endif%}
+
+              {% if is_state('switch.master_bedroom_door','on')
+              %}Bypassed{%endif%}
+            icon: hass:door
+            entity: binary_sensor.room_door
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.master_bedroom_door
+            layout: vertical
+            icon_color: >-
+              {{'red' if is_state('binary_sensor.room_door', 'on') else
+              'green'}}
+            badge_icon: |-
+              {% if is_state('switch.master_bedroom_door','on') %}
+              mdi:alert-circle
+              {%endif%}
+            badge_color: red
+            multiline_secondary: true
+            fill_container: true
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Kitchen Door
+            secondary: >-
+              {% if is_state('binary_sensor.kitchen_door','off')
+              %}Closed{%else%}Open{%endif%}
+
+              {% if is_state('switch.kitchen_door','on') %}Bypassed{%endif%}
+            icon: hass:door
+            entity: switch.kitchen_door
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.kitchen_door
+            layout: vertical
+            icon_color: >-
+              {{'red' if is_state('binary_sensor.kitchen_door', 'on') else
+              'green'}}
+            badge_icon: |-
+              {% if is_state('switch.kitchen_door','on') %}
+              mdi:alert-circle
+              {%endif%}
+            badge_color: red
+            multiline_secondary: true
+            fill_container: true
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-template-card
+            primary: Room 1 Window
+            secondary: >
+              {% if is_state('binary_sensor.room_1_window','off')
+              %}Closed{%else%}Open{%endif%}
+
+              {% if is_state('switch.room_1_windows','on') %}Bypassed{%endif%}
+            icon: hass:window-closed-variant
+            entity: switch.room_1_windows
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.room_1_windows
+            layout: vertical
+            icon_color: >-
+              {{'red' if is_state('binary_sensor.room_1_window', 'on') else
+              'green'}}
+            badge_icon: |-
+              {% if is_state('switch.room_1_windows','on') %}
+              mdi:alert-circle
+              {%endif%}
+            badge_color: red
+            multiline_secondary: true
+            fill_container: true
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-template-card
+            primary: Room 2 Windows
+            secondary: >-
+              {% if is_state('binary_sensor.room_2_window','off')
+              %}Closed{%else%}Open{%endif%}
+
+              {% if is_state('switch.room_2_windows','on') %}Bypassed{%endif%}
+            icon: hass:window-closed-variant
+            entity: switch.room_2_windows
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.room_2_windows
+            layout: vertical
+            icon_color: >-
+              {{'red' if is_state('binary_sensor.room_2_window', 'on') else
+              'green'}}
+            badge_icon: |-
+              {% if is_state('switch.room_2_windows','on') %}
+              mdi:alert-circle
+              {%endif%}
+            badge_color: red
+            multiline_secondary: true
+            fill_container: true
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Dining Room PIR
+            secondary: >-
+              {% if is_state('binary_sensor.dining_room','off')
+              %}Clear{%else%}Detected{%endif%}
+
+              {% if is_state('switch.dining_room_pir','on') %}Bypassed{%endif%}
+            icon: hass:motion-sensor
+            entity: switch.dining_room_pir
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.dining_room_pir
+            layout: vertical
+            icon_color: >-
+              {{'red' if is_state('binary_sensor.dining_room', 'on') else
+              'green'}}
+            badge_icon: |-
+              {% if is_state('switch.dining_room_pir','on') %}
+              mdi:alert-circle
+              {%endif%}
+            badge_color: red
+            multiline_secondary: true
+            fill_container: true
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-template-card
+            primary: Lounge PIR
+            secondary: >
+              {% if is_state('binary_sensor.lounge_pir','off')
+              %}Clear{%else%}Detected{%endif%}
+
+              {% if is_state('switch.lounge_pir','on') %}Bypassed{%endif%}
+            icon: hass:motion-sensor
+            entity: switch.lounge_pir
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.lounge_pir
+            layout: vertical
+            icon_color: >-
+              {{'red' if is_state('binary_sensor.lounge_pir', 'on') else
+              'green'}}
+            badge_icon: |-
+              {% if is_state('switch.lounge_pir','on') %}
+              mdi:alert-circle
+              {%endif%}
+            badge_color: red
+            multiline_secondary: true
+            fill_container: true
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-template-card
+            primary: Upstrairs PIR
+            secondary: >-
+              {% if is_state('binary_sensor.upstairs_pir','off')
+              %}Clear{%else%}Detected{%endif%}
+
+              {% if is_state('switch.upstairs_pir','on') %}Bypassed{%endif%}
+            icon: hass:motion-sensor
+            entity: switch.upstairs_pir
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.upstairs_pir
+            layout: vertical
+            icon_color: >-
+              {{'red' if is_state('binary_sensor.upstairs_pir', 'on') else
+              'green'}}
+            badge_icon: |-
+              {% if is_state('switch.upstairs_pir','on') %}
+              mdi:alert-circle
+              {%endif%}
+            badge_color: red
+            multiline_secondary: true
+            fill_container: true
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Garage PIR
+            secondary: >
+              {% if is_state('binary_sensor.garage_pir','off')
+              %}Clear{%else%}Detected{%endif%}
+
+              {% if is_state('switch.garage_pir','on') %}Bypassed{%endif%}
+            icon: hass:motion-sensor
+            entity: switch.garage_pir
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.garage_pir
+            layout: vertical
+            icon_color: >-
+              {{'red' if is_state('binary_sensor.garage_pir', 'on') else
+              'green'}}
+            badge_icon: |-
+              {% if is_state('switch.garage_pir','on') %}
+              mdi:alert-circle
+              {%endif%}
+            badge_color: red
+            multiline_secondary: true
+            fill_container: true
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-template-card
+            primary: Lounge Beam
+            secondary: >
+              {% if is_state('binary_sensor.lounge_beam','off')
+              %}Clear{%else%}Detected{%endif%}
+
+              {% if is_state('switch.lounge_beam','on') %}Bypassed{%endif%}
+            icon: hass:motion-sensor
+            entity: switch.lounge_beam
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.lounge_beam
+            layout: vertical
+            icon_color: >-
+              {{'red' if is_state('binary_sensor.lounge_beam', 'on') else
+              'green'}}
+            badge_icon: |-
+              {% if is_state('switch.lounge_beam','on') %}
+              mdi:alert-circle
+              {%endif%}
+            badge_color: red
+            multiline_secondary: true
+            fill_container: true
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+          - type: custom:mushroom-template-card
+            primary: Backyard Beam
+            secondary: >-
+              {% if is_state('binary_sensor.back_beam','off')
+              %}Clear{%else%}Detected{%endif%}
+
+              {% if is_state('switch.backyard_beam','on') %}Bypassed{%endif%}
+            icon: hass:motion-sensor
+            entity: switch.backyard_beam
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              data: {}
+              target:
+                entity_id: switch.backyard_beam
+            layout: vertical
+            icon_color: >-
+              {{'red' if is_state('binary_sensor.back_beam', 'on') else
+              'green'}}
+            badge_icon: |-
+              {% if is_state('switch.backyard_beam','on') %}
+              mdi:alert-circle
+              {%endif%}
+            badge_color: red
+            multiline_secondary: true
+            fill_container: true
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black}
+      - type: custom:collapsable-cards
+        title: Alarm History
+        card_mod:
+          style: |
+            ha-card {
+              border-radius: 15px;
+              background: black;
+              box-shadow: none;}
+        cards:
+          - type: logbook
+            entities:
+              - binary_sensor.back_beam
+              - binary_sensor.dining_room
+              - binary_sensor.garage_pir
+              - binary_sensor.front_door
+              - binary_sensor.kitchen_door
+              - binary_sensor.lounge_beam
+              - binary_sensor.lounge_door
+              - binary_sensor.lounge_pir
+              - binary_sensor.room_door
+              - binary_sensor.upstairs_pir
+              - binary_sensor.panics
+            hours_to_show: 1
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black} 
+  - theme: Backend-selected
+    title: network
+    path: network
+    icon: mdi:network
+    badges: []
+    cards:
+      - type: custom:mushroom-chips-card
+        chips:
+          - type: back
+      - type: custom:collapsable-cards
+        title: Zigbee Network
+        icon: mdi:zigbee
+        buttonStyle: |
+          ha-card {
+            border-radius: 15px;
+            background: black;}
+        cards:
+          - type: custom:mushroom-template-card
+            primary: ''
+            card_mod:
+              style: |
+                ha-card {
+                  border-radius: 15px;
+                  background: black;}
+            multiline_secondary: true
+            secondary: >-
+              Zigbee
+              Device{{'\t'}}{{'\t'}}{{'\t'}}{{'\t'}}{{'\t'}}{{'\t'}}State{{'\t'}}{{'\t'}}Battery{{'\n'}}Stairs
+              Motion Sensor (Bottom):
+              {{'\t'}}{{'\t'}}{{states('binary_sensor.stairs_motion_sensor_bottom_ias_zone')
+              |
+              capitalize}}{{'\t'}}{{'\t'}}{{'\t'}}{{states('sensor.stairs_motion_sensor_bottom_power')}}%{{'\n'}}Stairs
+              Motion Sensor (Top): {{'\t'}}{{'\t'}}
+              {{'\t'}}{{states('binary_sensor.stairs_motion_sensor_top_ias_zone')
+              |
+              capitalize}}{{'\t'}}{{'\t'}}{{'\t'}}{{states('sensor.stairs_motion_sensor_top_power')}}%{{'\n'}}Bedroom
+              Motion Sensor: {{'\t'}}{{'\t'}}{{'\t'}}
+              {{'\t'}}{{states('binary_sensor.stairs_motion_sensor_top_ias_zone')
+              |
+              capitalize}}{{'\t'}}{{'\t'}}{{'\t'}}{{states('sensor.wireless_button_master_bedroom_power')}}%{{'\n'}}Wireless
+              Button:
+              Bedroom:{{'\t'}}{{'\t'}}{{'\t'}}{{states('automation.wireless_switch_1')
+              |
+              capitalize}}{{'\t'}}{{'\t'}}{{'\t'}}{{states('sensor.wireless_button_master_bedroom_power')}}%{{'\n'}}Wireless
+              Button: Bedroom Door: {{'\t'}}
+              {{'\t'}}{{states('automation.wireless_button_master_bedroom_door')
+              |
+              capitalize}}{{'\t'}}{{'\t'}}{{'\t'}}{{states('sensor.wireless_button_master_bedroom_door_power')}}%{{'\n'}}Wireless
+              Button: Lounge {{'\t'}}{{'\t'}}{{'\t'}}
+              {{'\t'}}{{states('automation.lounge_wireless_button') |
+              capitalize}}{{'\t'}}{{'\t'}}{{'\t'}}{{states('sensor.wireless_button_lounge_power')}}%
+      - type: custom:stack-in-card
+        mode: vertical
+        card_mod:
+          style: |
+            ha-card {
+              background: black;
+              border-radius: 15px;
+              }
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Speedtest
+            secondary: ''
+            icon: mdi:speedometer
+            icon_color: blue
+            entity: ''
+          - type: custom:mushroom-chips-card
+            alignment: center
+            card_mod:
+              style: |
+                ha-card {
+                  top: -10px;
+                  }
+            chips:
+              - type: entity
+                entity: sensor.speedtest_download
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: none;
+                      }
+                icon: mdi:download
+                icon_color: blue
+              - type: entity
+                entity: sensor.speedtest_upload
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: none;
+                      }
+                icon: mdi:upload
+                icon_color: blue
+              - type: entity
+                entity: sensor.speedtest_ping
+                card_mod:
+                  style: |
+                    ha-card {
+                      --chip-background: none;
+                      }
+                icon: mdi:swap-vertical-bold
+                icon_color: blue
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: Hello, {{user}}
+            secondary: How are you?
+            icon: mdi:home
